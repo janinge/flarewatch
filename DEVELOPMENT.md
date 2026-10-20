@@ -2,6 +2,31 @@
 
 FlareWatch uses Vite+ (`vp`) for installs, checks, tests and builds.
 
+### Nix and direnv
+
+With Nix (flakes enabled) and direnv installed, the dev shell provides Node.js 24
+and Vite+ without running the Vite+ installer. `flake.lock` pins the packages,
+including the [community Vite+ package](https://github.com/ryoppippi/nix-vite-plus).
+
+Enable direnv in your shell once. For zsh, add this to `~/.zshrc` and open a new terminal:
+
+```bash
+eval "$(direnv hook zsh)"
+```
+
+Then, from the repository root:
+
+```bash
+direnv allow
+vp install
+```
+
+Direnv loads the shell when you enter the repository. Without direnv, run
+`nix develop` to enter it manually. Dependency installation stays explicit; run
+`vp install` after cloning or updating dependencies.
+
+### Commands
+
 ```bash
 vp install
 

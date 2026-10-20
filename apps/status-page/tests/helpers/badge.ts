@@ -1,6 +1,11 @@
 import { vi } from 'vite-plus/test';
+import type { MonitorTarget } from '@flarewatch/shared';
 import { authMiddlewareServer } from '@/server/auth-middleware';
 import { stubMonitorWorker } from './bindings';
+
+export const badgeMonitors: MonitorTarget[] = [
+  { id: 'demo_example', name: 'Example Domain', method: 'GET', target: 'https://example.com' },
+];
 
 export const BADGE_TIME = Date.parse('2025-01-15T12:00:00Z') / 1000;
 

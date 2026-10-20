@@ -1,11 +1,14 @@
-import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { workerConfig } from '@flarewatch/config/worker';
 import { forgetCachedView } from '@/lib/snapshots';
 import { Route } from '@/routes/api/badge[.]svg';
-import { BADGE_TIME, callBadge, stubBadgeView } from '../helpers/badge';
+import { BADGE_TIME, badgeMonitors, callBadge, stubBadgeView } from '../helpers/badge';
 import { forgetViewAroundEachTest } from '../helpers/snapshots';
 
 const originalMonitors = workerConfig.monitors;
+beforeEach(() => {
+  workerConfig.monitors = badgeMonitors;
+});
 afterEach(() => {
   workerConfig.monitors = originalMonitors;
 });
@@ -44,7 +47,7 @@ describe('GET /api/badge.svg', () => {
     expect(downSvg).toContain('fill="#fe7d37"');
     expect(downSvg).toContain('>OUT</text>');
     forgetCachedView();
-    workerConfig.monitors = originalMonitors.map((m) =>
+    workerConfig.monitors = badgeMonitors.map((m) =>
       m.id === 'demo_example' ? { ...m, maxLatencyMs: 10 } : m,
     );
     stubBadgeView('up', { latest: { ping: 100, loc: 'HEL', time: BADGE_TIME } });
@@ -88,7 +91,7 @@ describe('GET /api/badge.svg', () => {
     expect(svg).not.toContain('<script>');
     for (const status of ['up', 'down', 'degraded']) {
       forgetCachedView();
-      workerConfig.monitors = originalMonitors.map((m) =>
+      workerConfig.monitors = badgeMonitors.map((m) =>
         m.id === 'demo_example' ? { ...m, maxLatencyMs: 10 } : m,
       );
       stubBadgeView(status === 'down' ? 'down' : 'up', {
@@ -105,10 +108,10 @@ describe('GET /api/badge.svg', () => {
 
   it('keeps private and missing monitors out, serves unknown before a first result, and preserves failure statuses', async () => {
     stubBadgeView();
-    workerConfig.monitors = originalMonitors.map((m) => ({ ...m, private: true }));
+    workerConfig.monitors = badgeMonitors.map((m) => ({ ...m, private: true }));
     expect((await get()).status).toBe(404);
     expect((await get('/api/badge.svg')).status).toBe(400);
-    workerConfig.monitors = originalMonitors;
+    workerConfig.monitors = badgeMonitors;
     forgetCachedView();
     stubBadgeView('up', { startedAt: undefined });
     const firstResultPending = await get();

@@ -205,6 +205,21 @@ jobs:
           cp packages/config/src/demo/worker.ts packages/config/src/worker.ts
           cp packages/config/src/demo/public.ts packages/config/src/public.ts
 
+      - name: Configure private ingress monitors
+        env:
+          FLAREWATCH_PRIVATE_MONITORS: ${{ secrets.FLAREWATCH_PRIVATE_MONITORS }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { writeFileSync } from 'node:fs';
+          const input = JSON.parse(process.env.FLAREWATCH_PRIVATE_MONITORS || '[]');
+          if (!Array.isArray(input)) throw new Error('Private monitors must be an array');
+          const monitors = input.map((monitor) => ({ ...monitor, private: true, link: false }));
+          writeFileSync('packages/config/src/private-ingress.ts',
+            "import type { MonitorTarget } from '@flarewatch/shared';\n" +
+            'export const privateIngressMonitors: MonitorTarget[] = ' + JSON.stringify(monitors) + ';\n');
+          NODE
+          vp exec --filter worker -- vp test run tests/config.test.ts
+
       - name: Deploy with Wrangler
         env:
           FLAREWATCH_PROXY_TOKEN: ${{ secrets.FLAREWATCH_PROXY_TOKEN }}

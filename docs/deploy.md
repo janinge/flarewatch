@@ -57,7 +57,7 @@ gh secret set CLOUDFLARE_API_TOKEN --repo <you>/flarewatch
 Make the password secret from a username and password, and paste the whole output as the value:
 
 ```bash
-vp run auth:secret -- <username> '<password>'
+vp run auth:secret -- 'admin' 'replace-with-your-password'
 ```
 
 Each deploy copies the optional secrets onto the Workers. Removing one from GitHub doesn't remove it from the Worker. Delete it there by hand:
