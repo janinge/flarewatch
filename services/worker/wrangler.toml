@@ -9,6 +9,10 @@ compatibility_flags = []
 workers_dev = false
 preview_urls = false
 
+# Place the Worker near the h00t.works infrastructure.
+[placement]
+hostname = "headscale.h00t.works"
+
 # The hub stores monitor state in SQLite. Wrangler creates it on the first deploy.
 [[durable_objects.bindings]]
 name = "MONITOR_HUB"

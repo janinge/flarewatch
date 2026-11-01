@@ -46,10 +46,10 @@
     },
   ],
   /**
-   * Smart Placement
-   * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+   * Place the Worker near the h00t.works infrastructure.
+   * https://developers.cloudflare.com/workers/configuration/placement/
    */
-  // "placement": {  "mode": "smart" }
+  "placement": { "hostname": "headscale.h00t.works" },
   /**
    * Bindings
    * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
